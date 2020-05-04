@@ -1,0 +1,84 @@
+if ($request->hasFile('file')) {
+            $extension = File::extension($request->file->getClientOriginalName());
+
+            if ($extension == "xlsx" || $extension == "xls") {
+
+                $path = $request->file->getRealPath();
+
+
+                //  Load on file excel
+                $data = Excel::load($path, function($reader) {})->get();
+
+                if(!empty($data) && $data->count()){
+
+            foreach ($data->toArray() as $key => $value) {
+
+                if(!empty($value)){
+
+                    $eng010 = Eng010::insert([
+                                
+                        ['studentID'] => $value['studentID']
+                        ['courseTitle'] => $value['courseTitle']
+                        ['courseCode'] => $value['courseCode']
+                        ['assessment'] => $value['assessment']
+                        ['exam'] =>  $value['exam']
+                        ['total'] => $value['total']
+                        ['grade'] => $value['grade']
+                        ['point'] => $value['point']
+                                    ]);
+
+                    // foreach ($value as $v) {        
+
+                    //     $insert[] = ['studentID' => array_get($v,'studentID'), 
+                    //                 'courseTitle' => array_get($v,'courseTitle'),
+                    //                 'courseCode' => array_get($v,'courseCode'), 
+                    //                 'assessment' => array_get($v,'assessment'), 
+                    //                 'exam' => array_get($v,'exam'),
+                    //                 'total' => array_get($v,'total'),
+                    //                 'grade' => array_get($v,'grade'), 
+                    //                 'point' => array_get($v,'[point')
+                    //                 ];
+
+                    // }
+                }
+            }
+
+            // if(!empty($insert)){
+            //     Eng010::insert($insert);
+            //     // return back()->with('success','Insert Record successfully.');
+            // }
+        }
+
+                // //  Load on file excel
+                // $data = Excel::load($path, function($reader) {
+                //     Eng010::insert($reader->toArray());
+                // })->get();
+
+
+
+                //  Load on file excel
+                // $data = Excel::load($path, function($reader) {
+                //         $results = $reader->get()->toArray();
+                //     foreach ($results as $key => $value) {
+                //         $eng010 = new Eng010();
+                //         $eng010->studentID = $value['studentID'];
+                //         $eng010->courseTitle = $value['courseTitle'];
+                //         $eng010->courseCode = $value['courseCode'];
+                //         $eng010->assessment = $value['assessment'];
+                //         $eng010->exam =     $value['exam'];
+                //         $eng010->total = $value['total'];
+                //         $eng010->grade = $value['grade'];
+                //         $eng010->point = $value['point'];
+
+                //         $eng010->save();
+
+                //     }
+                    
+                // });
+                
+                -
+            }
+
+            return redirect()->route('eng010.index')
+            ->with('error_message', 'Error: invalid uploaded file! Enter the xlsx or xls files');
+        }

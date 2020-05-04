@@ -1,0 +1,32 @@
+public function import(Request $request)
+    {
+        $this->validate($request, [
+            'file' => 'required|mimes:xls,xlsx'
+        ], [
+            'file.required' => "Enter a file to upload!",
+        ]);
+
+        if($request->hasFile('file')){
+            Excel::load($request->file('file')->getRealPath(), function ($reader) {
+                foreach ($reader->toArray() as $key => $row) {
+
+                    // $data['studentID'] = $row['studentID'];
+                    // $data['courseTitle'] = $row['courseTitle'];
+                    // $data['courseCode'] = $row['courseCode'];
+                    // $data['assessment'] = $row['assessment'];
+                    // $data['exam'] =  $row['exam'];
+                    // $data['total'] = $row['total'];
+                    // $data['grade'] = $row['grade'];
+                    // $data['point'] = $row['point'];
+                    
+
+                    if(!empty($row)) {
+                        DB::table('eng_010')->insert($row);
+                    }
+                }
+            });
+        }
+
+        return redirect()->route('eng010.index')
+                ->with('success_message', 'File uploaded successfully!');
+    }
